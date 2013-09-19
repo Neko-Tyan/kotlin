@@ -3029,6 +3029,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
                 doTest("compiler/testData/diagnostics/tests/inference/conflictingSubstitutions.kt");
             }
             
+            @TestMetadata("constraintsOnNullableTypeVariable.kt")
+            public void testConstraintsOnNullableTypeVariable() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/constraintsOnNullableTypeVariable.kt");
+            }
+            
             @TestMetadata("dependOnExpectedType.kt")
             public void testDependOnExpectedType() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/dependOnExpectedType.kt");
@@ -3097,6 +3102,11 @@ public class JetDiagnosticsTestGenerated extends AbstractDiagnosticsTestWithEage
             @TestMetadata("noInformationForParameter.kt")
             public void testNoInformationForParameter() throws Exception {
                 doTest("compiler/testData/diagnostics/tests/inference/noInformationForParameter.kt");
+            }
+            
+            @TestMetadata("nullableUpperBound.kt")
+            public void testNullableUpperBound() throws Exception {
+                doTest("compiler/testData/diagnostics/tests/inference/nullableUpperBound.kt");
             }
             
             @TestMetadata("opposite.kt")
