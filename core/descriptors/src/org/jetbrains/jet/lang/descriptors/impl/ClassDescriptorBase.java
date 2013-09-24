@@ -21,6 +21,7 @@ import org.jetbrains.jet.lang.descriptors.ClassDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptor;
 import org.jetbrains.jet.lang.descriptors.DeclarationDescriptorVisitor;
 import org.jetbrains.jet.lang.descriptors.TypeParameterDescriptor;
+import org.jetbrains.jet.lang.resolve.name.Name;
 import org.jetbrains.jet.lang.resolve.scopes.JetScope;
 import org.jetbrains.jet.lang.resolve.scopes.SubstitutingScope;
 import org.jetbrains.jet.lang.types.*;
@@ -30,12 +31,32 @@ import java.util.Map;
 
 public abstract class ClassDescriptorBase implements ClassDescriptor {
 
+    private final DeclarationDescriptor containingDeclaration;
+    private final Name name;
+
     protected volatile JetType defaultType;
+
+    protected ClassDescriptorBase(@NotNull DeclarationDescriptor containingDeclaration, @NotNull Name name) {
+        this.containingDeclaration = containingDeclaration;
+        this.name = name;
+    }
+
+    @NotNull
+    @Override
+    public Name getName() {
+        return name;
+    }
 
     @NotNull
     @Override
     public DeclarationDescriptor getOriginal() {
         return this;
+    }
+
+    @NotNull
+    @Override
+    public DeclarationDescriptor getContainingDeclaration() {
+        return containingDeclaration;
     }
 
     protected abstract JetScope getScopeForMemberLookup();
