@@ -16,6 +16,7 @@
 
 package org.jetbrains.jet.plugin.codeInsight;
 
+import com.google.common.collect.Sets;
 import com.intellij.codeInsight.CodeInsightActionHandler;
 import com.intellij.codeInsight.navigation.NavigationUtil;
 import com.intellij.codeInsight.navigation.actions.GotoSuperAction;
@@ -43,6 +44,9 @@ import org.jetbrains.jet.plugin.project.AnalyzerFacadeWithCache;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
+import static org.jetbrains.jet.lang.descriptors.CallableMemberDescriptor.Kind.*;
 
 public class GotoSuperActionHandler implements CodeInsightActionHandler {
     @Override
@@ -82,7 +86,7 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
             message = JetBundle.message("goto.super.class.chooser.title");
         }
         else if (descriptor instanceof CallableMemberDescriptor) {
-            superDescriptors = ((CallableMemberDescriptor) descriptor).getOverriddenDescriptors();
+            superDescriptors = getOverriddenDeclarations((CallableMemberDescriptor) descriptor);
             if (descriptor instanceof PropertyDescriptor) {
                 message = JetBundle.message("goto.super.property.chooser.title");
             }
@@ -119,6 +123,24 @@ public class GotoSuperActionHandler implements CodeInsightActionHandler {
                                                                 new JetFunctionPsiElementCellRenderer(bindingContext), message);
             popup.showInBestPositionFor(editor);
         }
+    }
+
+    @NotNull
+    private static Set<CallableMemberDescriptor> getOverriddenDeclarations(@NotNull CallableMemberDescriptor descriptor) {
+        Set<CallableMemberDescriptor> result = Sets.newHashSet();
+        Set<? extends CallableMemberDescriptor> overriddenDescriptors = descriptor.getOverriddenDescriptors();
+        for (CallableMemberDescriptor overriddenDescriptor : overriddenDescriptors) {
+            if (overriddenDescriptor.getKind() == CallableMemberDescriptor.Kind.DECLARATION) {
+                result.add(overriddenDescriptor);
+            }
+            else if (overriddenDescriptor.getKind() == FAKE_OVERRIDE || overriddenDescriptor.getKind() == DELEGATION) {
+                result.addAll(getOverriddenDeclarations(overriddenDescriptor));
+            }
+            else if (overriddenDescriptor.getKind() == SYNTHESIZED) {
+                //do nothing
+            }
+        }
+        return result;
     }
 
     @Override
