@@ -65,3 +65,22 @@ fun test(a: A<Int>, i: In<Int?>) {
     h: Int
 }
 
+//-------------------
+
+fun <T: Any> foo(t: T?): T = throw Exception("$t")
+fun <T: Any> foo(o: Out<T?>): T { throw Exception("$o") }
+fun <T: Any> foo(i: In<T?>) { throw Exception("$i") }
+fun <T: Any> foo(i: A<T?>) { throw Exception("$i") }
+
+fun test(out: Out<Int>, i: In<Int>, inv: A<Int>) {
+    // T? >: Int => T = Int
+    foo(1)
+    val r = foo(out)
+    r: Int
+
+    // T? <: Int => error
+    foo(<!TYPE_MISMATCH!>i<!>)
+
+    // T? >: Int => error
+    foo(<!TYPE_MISMATCH!>inv<!>)
+}

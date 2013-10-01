@@ -407,6 +407,9 @@ public class ConstraintSystemImpl implements ConstraintSystem {
         assert typeBounds != null : "constraint should be generated only for type variables";
 
         if (!parameterType.isNullable() || !constrainingType.isNullable()) {
+            // For now constraints T? >: Int, T? <: Int, T? = Int all transform to T >: Int, T <: Int, T = Int
+            // and an error is generated later.
+            // todo: consider generating error at once
             typeBounds.addBound(boundKind, constrainingType, constraintPosition);
             return;
         }
